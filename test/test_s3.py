@@ -1,4 +1,4 @@
-from dictcloud.s3 import factory 
+from cloudydict.s3 import factory 
 
 d = factory('wnyc.org-adeprince-dictcloud-test') 
 d = d()
