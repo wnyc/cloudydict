@@ -2,7 +2,7 @@ cloudydict
 ==========
 
 Cloudydict is a cross vendor compatibility layer that makes all cloud
-file services look as much like a dict as possible.
+file services look as much like a python dict as possible.
 
 Use cloudydict instead of boto or cloudfiles and enjoy simple
 dictionary based access to your files.
@@ -13,41 +13,39 @@ Manifesto
 Python dicts are awesome.  The cloud is awesome.  So why do the python
 APIs for these services suck so much?
 
-When you "download from the cloud" you are basically performing a key
-look-up.  The intuitive interface would look like this:
+The intuitive API to retrieve something from S3 should be:
 
+    cloud = S3Connection().get_bucket(<my_bucket>)
     value = cloud[<my key>]
 
-So why is it in boto I must say: 
+So why is it boto requres I must say: 
 
-    cloud = S3Connection(<).get_bucket(<my_bucket>)
+    cloud = S3Connection().get_bucket(<my_bucket>)
     key = cloud.get_key(<key>)
     value = key.get_contents_as_string()
 
-and for RackSpace's cloudfiles I must say: 
+Similarly why does Rackspace require I say: 
 
     cloud = cloudfiles.get_connection().get_container(<my_bucket>)
     obj = cloud.get_object(<key>)
     value = obj.read()
 
-Testing for membership is equally cumbersome.  In python I'd write:
+Testing for membership is equally cumbersome.  In python I might write: 
 
     if key in cloud
 
-but in boto I'd write 
+Boto requires I write:
 
     if cloud.get_key(<key>) is None:
 
-and cloudfiles I'd write
+Cloudfiles requires I write: 
 
     try:
       cloud.get_object(<key>)
     except NoSuchObject:
       pass
 
-
-Cloudydict makes it possible for you to do most of what you want with
-your cloud storage provider while using standard Python conventions.   I
+Cloudydict standardizes cloud services to work like a dictionary.  
 
 Tutorial
 --------
