@@ -13,7 +13,7 @@ Manifesto
 Python dicts are awesome.  The cloud is awesome.  So why do the python
 APIs for these services suck so much?
 
-The intuitive API to retrieve something from S3 should be:
+The intuitive API to retrieve something with boto from S3 should be:
 
     cloud = S3Connection().get_bucket(<my_bucket>)
     value = cloud[<my key>]
