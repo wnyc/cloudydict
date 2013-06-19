@@ -18,7 +18,7 @@ The intuitive API to retrieve something from S3 should be:
     cloud = S3Connection().get_bucket(<my_bucket>)
     value = cloud[<my key>]
 
-So why is it boto requres I must say: 
+So why is it boto requres I say: 
 
     cloud = S3Connection().get_bucket(<my_bucket>)
     key = cloud.get_key(<key>)
@@ -45,7 +45,7 @@ Cloudfiles requires I write:
     except NoSuchObject:
       pass
 
-Cloudydict standardizes cloud services to work like a dictionary.  
+Cloud files are a dictionary.  They should act like one.  Cloudydict fixes that. 
 
 Tutorial
 --------
