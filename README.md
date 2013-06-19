@@ -1,6 +1,8 @@
 cloudydict
 ==========
 
+![alt text](https://github.com/wnyc/cloudydict/raw/cloud.jpg"cloudydict")
+
 Cloudydict is a cross vendor compatibility layer that makes all cloud
 file services look as much like a python dict as possible.
 

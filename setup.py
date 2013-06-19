@@ -44,5 +44,6 @@ setup(
     install_requires=[
         "boto",
         "python-cloudfiles",
+        # "appengine",
     ]
 )
