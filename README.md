@@ -9,6 +9,14 @@ file services look as much like a python dict as possible.
 Use cloudydict instead of boto or cloudfiles and enjoy simple
 dictionary based access to your files.
 
+Installation
+------------
+
+Its on Pypi.  Just run this:
+
+    $ pip install --upgrade cloudydict
+
+
 Manifesto
 ---------
 
