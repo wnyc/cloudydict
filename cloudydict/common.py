@@ -65,6 +65,11 @@ class DictsLittleHelper:
     def has_key(self, key):
         return key in self
 
+    def get(self, key, default=None):
+        if key in self:
+            return self[key]
+        return default
+
     def pop(self, k, *args):
         if len(args) not in (0, 1):
             raise TypeError('Zero or one default value parameters')

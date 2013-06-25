@@ -17,12 +17,12 @@ class RemoteObject(common.RemoteObject):
 
 class cloudydict(common.DictsLittleHelper):
     def __init__(self, **kwargs):
-        self.connection = S3Connection(**self.connection_kwargs)
+        self.connection = S3Connection(*self.connection_args, **self.connection_kwargs)
         try:
             self.bucket = self.connection.get_bucket(self.key)
         except boto.exception.S3ResponseError:
             self.bucket = self.connection.create_bucket(self.key)
-        for key, value in kwargs:
+        for key, value in kwargs.items():
             self[key] = value
 
     def __setitem__(self, key, value):
@@ -51,8 +51,9 @@ class cloudydict(common.DictsLittleHelper):
         self.bucket.delete_key(key)
         
 
-def factory(bucket_key, **kwargs):
+def factory(bucket_key, *args, **kwargs):
     class S3Cloudydict(cloudydict):
+        connection_args = args
         connection_kwargs = kwargs 
         key = bucket_key
     return S3Cloudydict
