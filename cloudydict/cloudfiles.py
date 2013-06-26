@@ -14,7 +14,7 @@ class RemoteObject(common.RemoteObject):
         return self.value
 
 
-class cloudydict(common.DictsLittleHelper):
+class CloudyDict(common.DictsLittleHelper):
     def __init__(self, *args, **kwargs):
         print self.connection_args, self.connection_kwargs, "###"*10
         self.connection = get_connection(*self.connection_args, **self.connection_kwargs)
@@ -38,12 +38,11 @@ class cloudydict(common.DictsLittleHelper):
             raise KeyError(k)
 
     def __iter__(self):
-        prefix = None
-        objects = []
-        while bool(prefix) != bool(objects):
-            objects = self.container.get_objects(prefix=prefix):
+        objects = list(self.container.get_objects())
+        while objects:
             for key in objects:
                 yield key.name
+            objects = list(self.container.get_objects(marker=key.name))
 
 
     def __contains__(self, key):
@@ -55,7 +54,7 @@ class cloudydict(common.DictsLittleHelper):
         
 
 def factory(container_key, *args, **kwargs):
-    class CFCloudydict(cloudydict):
+    class CFCloudydict(CloudyDict):
         connection_args = args 
         connection_kwargs = kwargs 
         key = container_key
