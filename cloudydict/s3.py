@@ -15,7 +15,7 @@ class RemoteObject(common.RemoteObject):
         return self.value
 
 
-class cloudydict(common.DictsLittleHelper):
+class CloudyDict(common.DictsLittleHelper):
     def __init__(self, **kwargs):
         self.connection = S3Connection(*self.connection_args, **self.connection_kwargs)
         try:
@@ -52,8 +52,15 @@ class cloudydict(common.DictsLittleHelper):
         
 
 def factory(bucket_key, *args, **kwargs):
-    class S3Cloudydict(cloudydict):
+    class S3Cloudydict(CloudyDict):
         connection_args = args
         connection_kwargs = kwargs 
         key = bucket_key
     return S3Cloudydict
+
+
+def s3_dict(*args, **kwargs):
+    return factory(*args, **kwargs)()
+
+def cloudydict(*args, **kwargs):
+    return s3_dict(*args, **kwargs)

@@ -38,8 +38,13 @@ class cloudydict(common.DictsLittleHelper):
             raise KeyError(k)
 
     def __iter__(self):
-        for key in self.container.get_objects():
-            yield key.name
+        prefix = None
+        objects = []
+        while bool(prefix) != bool(objects):
+            objects = self.container.get_objects(prefix=prefix):
+            for key in objects:
+                yield key.name
+
 
     def __contains__(self, key):
         try:
@@ -55,3 +60,9 @@ def factory(container_key, *args, **kwargs):
         connection_kwargs = kwargs 
         key = container_key
     return CFCloudydict
+
+def cloudfiles_dict(*args, **kwargs):
+    return factory(*args, **kwargs)()
+
+def cloudydict(*args, **kwargs):
+    return cloudfiles_dict(*args, **kwargs)
