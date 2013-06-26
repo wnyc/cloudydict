@@ -80,9 +80,10 @@ class DictsLittleHelper:
         raise KeyError(k)
 
     def update(self, *d, **kwargs):
-        if len(args) not in (0, 1):
+        if len(d) not in (0, 1):
             raise TypeError('Update expected at most 1 parameter, %d provided' % len(*d))
         if len(d):
+            d = d[0]
             if hasattr(d, 'keys'):
                 for k in d.keys():
                     self[k] = d[k]
