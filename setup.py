@@ -21,7 +21,7 @@ from setuptools import setup
 
 setup(
     name='cloudydict',
-    version='0.0.2',
+    version='0.0.5',
     author='Adam DePrince',
     author_email='adeprince@nypublicradio.org',
     description='Dictionary interface to cloud providers.',
@@ -31,6 +31,7 @@ setup(
         "cloudydict/s3",
         "cloudydict/common",
         "cloudydict/cloudfiles",
+        "cloudydict/django_storage",
     ],
     # packages=["cloudydict "],
     zip_safe=True,
