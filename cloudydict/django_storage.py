@@ -6,7 +6,9 @@ class Storage(_Storage):
     def __init__(self, bucket, *args, **kwargs):
         self.dict = cloudydict(bucket, *args, **kwargs)
 
-    def _open(self, name):
+    def _open(self, name, mode='rb'):
+        if 'w' in mode or 'a' in mode:
+            raise IOERROR("Permission denied (cannot yet open cloudydict.djang_storage.Storage objects with writable flags)")
         return self.dict[name]
 
     def delete(self, name):
@@ -24,7 +26,7 @@ class Storage(_Storage):
         k.make_public()
 
     def size(self, name):
-        self[name].size
+        self.dict[name].size
 
     def url(self, name):
-        self[name].url
+        self.dict[name].url
