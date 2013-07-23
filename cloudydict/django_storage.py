@@ -4,6 +4,7 @@ from django.conf import settings
 
 class Storage(_Storage):
     def __init__(self, bucket, *args, **kwargs):
+        self.bucket = bucket
         self.dict = cloudydict(bucket, *args, **kwargs)
 
     def _open(self, name, mode='rb'):
@@ -21,7 +22,13 @@ class Storage(_Storage):
         raise NotImplemented()
 
     def _save(self, name, content):
-        self.dict[name] = content.file.read()
+        if hasattr(content, 'file'):
+            self.dict[name] = content.file.read()
+        elif hasattr(content, 'read'):
+            self.dict[name] = content.read()
+        else:
+            self.dict[name] = content
+            
         k = self.dict[name]
         k.make_public()
 
