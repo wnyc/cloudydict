@@ -1,9 +1,9 @@
 import boto
 from boto.s3.connection import S3Connection
+from boto.s3.lifecycle import Lifecycle, Transition, Rule
 from boto.s3.key import Key
 from cloudydict import common
-from boto.s3.lifecycle import Lifecycle, Transition, Rule
-
+from datetime import datetime, timedelta
 
 class RemoteObject(common.RemoteObject):
     def __init__(self, key, url):
