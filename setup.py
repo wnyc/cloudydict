@@ -21,7 +21,7 @@ from setuptools import setup
 
 setup(
     name='cloudydict',
-    version='0.0.9',
+    version='0.0.10',
     author='Adam DePrince',
     author_email='adeprince@nypublicradio.org',
     description='Dictionary interface to cloud providers.',
