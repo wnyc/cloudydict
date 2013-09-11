@@ -8,6 +8,36 @@ class RemoteObject:
     stringnames = set(underscores + stringnames)
     filenames = '__iter__ close isatty next read readline readlines seek tell'.split()
 
+    def freeze(self, time=None):
+        """Freeze files into long term storage.  Retrival requires they be thawed again.
+
+        This is a NOP stub for backends that don't know how to freeze
+        things; the docs here just describe how things would work on a
+        backend that supports this feature (like S3 & glacier)
+
+        Args: 
+          time: A datetime or timedelta object indicaitng when this
+          object should be frozen.  If omited, freeze immediately
+        """
+        pass
+
+    def thaw(self):
+        """Thaw a frozen file.  NOP if not frozen.
+        
+        This is actually a NOP stub for backends that don't support
+        freezeing anda thawing to and from long term storage
+        (i.e. like S3/Glacier)
+        """
+        pass
+
+    def is_frozen(self):
+        """Return True if this file handle is frozen, False if not.
+
+        This particular implementation always returns False becuase
+        this backend does not support freezing files into long term
+        storage.
+        """
+
     def as_file(self):
         if self.string_io is None:
             self.string_io = StringIO(self.as_string())

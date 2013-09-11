@@ -2,6 +2,7 @@ import boto
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from cloudydict import common
+from boto.s3.lifecycle import Lifecycle, Transition, Rule
 
 
 class RemoteObject(common.RemoteObject):
@@ -23,6 +24,36 @@ class RemoteObject(common.RemoteObject):
     def make_public(self):
         self.key.make_public()
         self.key.set_acl('public-read')
+
+    def thaw(self, time):
+        if isinstance(time, datetime):
+            time = time - datetime.now()
+        if isinstance(time, timedelta):
+            time = time.days
+        self.key.restore(days=time)
+
+    def freeze(self, time):
+        if time and isinstance(time, timedelta):
+            time += timedelta(hours=12)
+            transition = Transition(days=time.days, storage_class='GLACIER')
+        elif time and isinstance(time, datetime):
+            transition = Transition(days=(time-datetime.now()).days, storage_class='GLACIER')
+        else:
+            transition = Transition(days=time, storage_class='GLACIER')
+
+        key = self.key.key
+        rule = Rule(key, key, 'Enabled', transition=to_glacier)
+
+        lifecycle = Lifecycle()
+        lifecycle.append(rule)
+        self.bucket.configure_lifecycle(lifecycle)
+
+    def is_frozen(self):
+        self.key.storage_class == 'GLACIER'
+
+    def is_thawing(self):
+        self.key.ongoing_restore
+        
         
 
 class CloudyDict(common.DictsLittleHelper):
@@ -66,7 +97,8 @@ class CloudyDict(common.DictsLittleHelper):
 
     def make_public(self):
         return self.bucket.make_public(recursive=True)
-        
+
+
 
 def factory(bucket_key, *args, **kwargs):
     class S3Cloudydict(CloudyDict):
