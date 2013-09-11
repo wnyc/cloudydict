@@ -6,10 +6,11 @@ from cloudydict import common
 from datetime import datetime, timedelta
 
 class RemoteObject(common.RemoteObject):
-    def __init__(self, key, url):
+    def __init__(self, key, url, bucket=None):
         self.size = key.size
         self.key = key
         self.url = url
+        self.bucket = bucket
         self.value = None
 
     @property
@@ -32,7 +33,7 @@ class RemoteObject(common.RemoteObject):
             time = time.days
         self.key.restore(days=time)
 
-    def freeze(self, time):
+    def freeze(self, time=0):
         if time and isinstance(time, timedelta):
             time += timedelta(hours=12)
             transition = Transition(days=time.days, storage_class='GLACIER')
@@ -42,7 +43,7 @@ class RemoteObject(common.RemoteObject):
             transition = Transition(days=time, storage_class='GLACIER')
 
         key = self.key.key
-        rule = Rule(key, key, 'Enabled', transition=to_glacier)
+        rule = Rule(key, key, 'Enabled', transition=transition)
 
         lifecycle = Lifecycle()
         lifecycle.append(rule)
@@ -79,7 +80,7 @@ class CloudyDict(common.DictsLittleHelper):
         key = self.bucket.get_key(k)
         if key is None:
             raise KeyError(k)
-        return RemoteObject(key,  self.host + "/" + key.key)
+        return RemoteObject(key,  self.host + "/" + key.key, self.bucket)
 
     def __iter__(self):
         for key in self.bucket.list():
