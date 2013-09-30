@@ -2,6 +2,7 @@ from django.core.files.storage import Storage as _Storage
 from cloudydict import cloudydict
 from django.conf import settings
 
+
 class Storage(_Storage):
     def __init__(self, bucket, *args, **kwargs):
         self.bucket = bucket
@@ -33,7 +34,18 @@ class Storage(_Storage):
         k.make_public()
 
     def size(self, name):
-        self.dict[name].size
+        try:
+            self.dict[name].size
+        except KeyError:
+            return None
 
     def url(self, name):
-        self.dict[name].url
+        try:
+            self.dict[name].url
+        except KeyError:
+            return None
+
+class StorageFromSettings(Storage):
+    def __init__(self):
+        Storage.__init__(self, *settings.CLOUDY_DICT_STORAGE_SERVER_OPTIONS)
+

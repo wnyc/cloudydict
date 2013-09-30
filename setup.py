@@ -33,7 +33,7 @@ setup(
         "cloudydict/cloudfiles",
         "cloudydict/django_storage",
     ],
-    # packages=["cloudydict "],
+    packages=["cloudydict"],
     zip_safe=True,
     license='GPL',
     include_package_data=True,
