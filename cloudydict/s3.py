@@ -1,14 +1,16 @@
 import boto
 from boto.s3.connection import S3Connection
+from boto.s3.lifecycle import Lifecycle, Transition, Rule
 from boto.s3.key import Key
 from cloudydict import common
-
+from datetime import datetime, timedelta
 
 class RemoteObject(common.RemoteObject):
-    def __init__(self, key, url):
+    def __init__(self, key, url, bucket=None):
         self.size = key.size
         self.key = key
         self.url = url
+        self.bucket = bucket
         self.value = None
 
     @property
@@ -23,6 +25,36 @@ class RemoteObject(common.RemoteObject):
     def make_public(self):
         self.key.make_public()
         self.key.set_acl('public-read')
+
+    def thaw(self, time):
+        if isinstance(time, datetime):
+            time = time - datetime.now()
+        if isinstance(time, timedelta):
+            time = time.days
+        self.key.restore(days=time)
+
+    def freeze(self, time=0):
+        if time and isinstance(time, timedelta):
+            time += timedelta(hours=12)
+            transition = Transition(days=time.days, storage_class='GLACIER')
+        elif time and isinstance(time, datetime):
+            transition = Transition(days=(time-datetime.now()).days, storage_class='GLACIER')
+        else:
+            transition = Transition(days=time, storage_class='GLACIER')
+
+        key = self.key.key
+        rule = Rule(key, key, 'Enabled', transition=transition)
+
+        lifecycle = Lifecycle()
+        lifecycle.append(rule)
+        self.bucket.configure_lifecycle(lifecycle)
+
+    def is_frozen(self):
+        self.key.storage_class == 'GLACIER'
+
+    def is_thawing(self):
+        self.key.ongoing_restore
+        
         
 
 class CloudyDict(common.DictsLittleHelper):
@@ -48,7 +80,7 @@ class CloudyDict(common.DictsLittleHelper):
         key = self.bucket.get_key(k)
         if key is None:
             raise KeyError(k)
-        return RemoteObject(key,  self.host + "/" + key.key)
+        return RemoteObject(key,  self.host + "/" + key.key, self.bucket)
 
     def __iter__(self):
         for key in self.bucket.list():
@@ -66,7 +98,8 @@ class CloudyDict(common.DictsLittleHelper):
 
     def make_public(self):
         return self.bucket.make_public(recursive=True)
-        
+
+
 
 def factory(bucket_key, *args, **kwargs):
     class S3Cloudydict(CloudyDict):
