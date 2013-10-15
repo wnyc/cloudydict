@@ -32,6 +32,7 @@ class Storage(_Storage):
             
         k = self.dict[name]
         k.make_public()
+        return name
 
     def size(self, name):
         try:
