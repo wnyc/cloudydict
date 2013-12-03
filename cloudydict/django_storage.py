@@ -42,7 +42,7 @@ class Storage(_Storage):
 
     def url(self, name):
         try:
-            self.dict[name].url
+            return "http://" + self.dict[name].url
         except KeyError:
             return None
 
