@@ -16,6 +16,10 @@ Its on Pypi.  Just run this:
 
     $ pip install --upgrade cloudydict
 
+Tutorial
+--------
+
+You might want to take a look at cloudydict's homepage: http://wnyc.github.io/cloudydict/
 
 Manifesto
 ---------
