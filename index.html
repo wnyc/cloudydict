@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <h1>Cloudydict</h1>
-        <p>A common dictionary like API for multiple cloud file vendors</p>
+	<p>Cloud file storage for humans</p>
 
         <p class="view"><a href="https://github.com/wnyc/cloudydict">View the Project on GitHub <small>wnyc/cloudydict</small></a></p>
 
@@ -25,6 +25,7 @@
           <li><a href="https://github.com/wnyc/cloudydict/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/wnyc/cloudydict/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/wnyc/cloudydict">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://pypi.python.org/pypi/cloudydict">View On <strong>Pypi</strong></a></li>
         </ul>
       </header>
       <section>
@@ -33,11 +34,8 @@
 
 <p><img src="/cloud.jpg" alt="alt text"></p>
 
-<p>Cloudydict is a cross vendor compatibility layer that makes all cloud
-file services look as much like a python dict as possible.</p>
+<p>Cloudydict is a simple python module that makes accessing cloudfiles as easy as using a dictionary.  With cloudydict, gone are worries about proprietary APIS and complicated refactorings to migrate.  </p>
 
-<p>Use cloudydict instead of boto or cloudfiles and enjoy simple
-dictionary based access to your files.</p>
 
 <h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
@@ -47,146 +45,21 @@ dictionary based access to your files.</p>
 <pre><code>$ pip install --upgrade cloudydict
 </code></pre>
 
-<h2>
-<a name="manifesto" class="anchor" href="#manifesto"><span class="octicon octicon-link"></span></a>Manifesto</h2>
-
-<p>Python dicts are awesome.  The cloud is awesome.  So why do the python
-APIs for these services suck so much?</p>
-
-<p>The intuitive API to retrieve something with boto from S3 should be:</p>
-
-<pre><code>cloud = S3Connection().get_bucket(&lt;my_bucket&gt;)
-value = cloud[&lt;my key&gt;]
-</code></pre>
-
-<p>So why is it boto requres I say: </p>
-
-<pre><code>cloud = S3Connection().get_bucket(&lt;my_bucket&gt;)
-key = cloud.get_key(&lt;key&gt;)
-value = key.get_contents_as_string()
-</code></pre>
-
-<p>Similarly why does Rackspace require I say: </p>
-
-<pre><code>cloud = cloudfiles.get_connection().get_container(&lt;my_bucket&gt;)
-obj = cloud.get_object(&lt;key&gt;)
-value = obj.read()
-</code></pre>
-
-<p>Testing for membership is equally cumbersome.  In python I might write: </p>
-
-<pre><code>if key in cloud
-</code></pre>
-
-<p>Boto requires I write:</p>
-
-<pre><code>if cloud.get_key(&lt;key&gt;) is None:
-</code></pre>
-
-<p>Cloudfiles requires I write: </p>
-
-<pre><code>try:
-  cloud.get_object(&lt;key&gt;)
-except NoSuchObject:
-  pass
-</code></pre>
-
-<p>Cloud files are a dictionary.  They should act like one.  Cloudydict fixes that. </p>
 
 <h2>
 <a name="tutorial" class="anchor" href="#tutorial"><span class="octicon octicon-link"></span></a>Tutorial</h2>
 
-<p>This tutorial assumes you are using Amazon S3 and have already setup your .boto configuration file. </p>
+<p>Assuming you've setup your <strong>.boto</strong> configuration file, working with S3 and cloudydict is as simple as:</p>
 
-<p>Normally when you create a dictionary in python it suffices to say: </p>
-
-<pre><code>a = dict() 
+<pre><code>>>> from cloudydict import cloudydict         
+>>> d = cloudydict('s3:cloudydict-demo')   
+>>> d['a'] = 'Hello world'         
+>>> d['b'] = 'How are you?'          
+>>> d.keys()         
+>>> d.values()
 </code></pre>
 
-<p>In cloudydict you need to provide one more piece of information.  The name of your bucket in which you store your key/value pairs. </p>
 
-<pre><code>from cloudydict.s3 import factory
-my_dict_class = factory(&lt;my bucket name&gt;) 
-</code></pre>
-
-<p><code>my_dict_class</code> is analogous to the <code>dict</code> function in python.  It
-isn't the dictionary itself but rather a constructor to it.  It is
-more or less compatible with dict; saying this:</p>
-
-<pre><code>d = my_dict_class(a='1', b='2')
-</code></pre>
-
-<p>will add the files <code>a</code> and <code>b</code> to your bucket; these will hold files
-with the contents of <code>1</code> and <code>2</code> respectively.</p>
-
-<p>Cloudydict differs somewhat from python's <code>dict</code> in one regard:
-instances of python's <code>dict</code> are private.  Cloudydict instances
-associated with the same bucket are shares, so a second object like
-this:</p>
-
-<pre><code>e = my_dict_class(c='3')
-</code></pre>
-
-<p>will be able to see a and b.  </p>
-
-<p>We can test for set membership in cloudydict:</p>
-
-<pre><code>'c' in d # should be true
-'q' in d # should be false
-</code></pre>
-
-<p>We can add values:</p>
-
-<p>d['d'] = 'foobar'</p>
-
-<p>We can remove values:</p>
-
-<p>del(d['a'])</p>
-
-<p>We can list values:</p>
-
-<pre><code>print d.items()
-</code></pre>
-
-<p>And we can retrieve items</p>
-
-<pre><code>print d['a']
-</code></pre>
-
-<p>You might note that cloudydict does not return a string, but rather an
-instance of <code>cloudydict.common.RemoteObject</code>.  RemoteObject is a lazy
-evaluating proxy that emulates fairly well the behavior of both a
-read only file and a string.  It tries to do so fairly efficiently too,
-so for example when interacting with back ends that support it, string
-slicing will result in HTTP range requests.  Similarly treating the
-RemoteObject as a file and calling <code>readline</code> repeatedly will result in
-streaming behavior.</p>
-
-<p>The "dual duck type" model of RemoteObject does fail for methods that
-have different behaviors between implementations.  For example, iter
-on a string and file return individual character and lines
-respectively.  This is resolved by picking whichever approach is less
-accessible by a standard python convention; in the case of iter, the file <strong>iter</strong> semantics are provided by default.  Those desiring string semantics need to wrap their RemoteObject in a call to str like this: <code>str(d[&lt;key&gt;])</code></p>
-
-<p>Storage into cloudydict is similarly limited.  Three types of data may
-be stored in cloudydict: file like objects that have a <code>read</code> method,
-strings or objects that have sanely when <code>str(&lt;value&gt;)</code> is called and
-other RemoteObject instances.</p>
-
-<p>When copying values between cloudydict instances never say this:</p>
-
-<pre><code>d['z'] = str(e['d'])
-</code></pre>
-
-<p>Instead it is more efficient to pass the 
-RemoteObject instance like this:</p>
-
-<pre><code>d['z'] = e['d']
-</code></pre>
-
-<p>Cloudydict is aware of some of the special functionality some cloud
-vendors offer.  For example, when copying between two S3 backed
-dictionaries, cloudy dict can use Amazon's cross bucket copy commands.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/wnyc">wnyc</a></p>
