@@ -50,5 +50,5 @@ class Storage(_Storage):
 
 class StorageFromSettings(Storage):
     def __init__(self):
-        Storage.__init__(self, *settings.CLOUDY_DICT_STORAGE_SERVER_OPTIONS)
+        Storage.__init__(self, *settings.CLOUDY_DICT_SERVER_OPTIONS_SECRET)
 
