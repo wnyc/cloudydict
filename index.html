@@ -98,7 +98,7 @@ cloudydict objects that can be treated either as strings or files.</p>
  (u'b', &lt;cloudydict.s3.RemoteObject instance at 0x23c2560&gt;)]
 </code></pre>
 
-<p><code>__setitem__ </code> calls against cloudydict will accept a python string, file or another cloudydict <code>RemoveObject</code>.   If an assignment is made from a compatible remote object, cloudydict will perform the copy using the cloud's underlying bucket to bucket copy commands.   
+<p><code>__setitem__ </code> calls against cloudydict will accept a python string, file or another cloudydict <code>RemoteObject</code>.   If an assignment is made from a compatible remote object, cloudydict will perform the copy using the cloud's underlying bucket to bucket copy commands.   
 </p>
 <pre><code>
 &gt;&gt;&gt; d['c'] = d['b']  # Does not download d['b']
