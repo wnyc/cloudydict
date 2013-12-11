@@ -38,10 +38,15 @@ setup(
     license='GPL',
     include_package_data=True,
     classifiers=[
+        'Framework :: Django',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'License :: OSI Approved :: MIT License',
+        'Development Status :: 3 - Alpha'
     ],
     scripts=[
     ],
-    url="https://github.com/wnyc/cloudydict ",
+    url="http://wnyc.github.io/cloudydict/",
     install_requires=[
         "boto",
         "python-cloudfiles",
