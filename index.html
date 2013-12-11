@@ -96,8 +96,8 @@ cloudydict objects that can be treated either as strings or files.</p>
 </code></pre>
 
 <p><code>__setitem__ </code> calls against cloudydict will accept a python string, file or another cloudydict <code>RemoveObject</code>.   If an assignment is made from a compatible remote object, cloudydict will perform the copy using the cloud's underlying bucket to bucket copy commands.   
+</p>
 <pre><code>
-
 &gt;&gt;&gt; d['c'] = d['b']  # Does not download d['b']
 &gt;&gt;&gt; str(d['c'])   # Well, this does
 'world'   
@@ -107,6 +107,7 @@ cloudydict objects that can be treated either as strings or files.</p>
 specific operations.  Not all cloud vendors support these, but for
 those that do, you can make files public and retrieve their url.</p>
 
+<pre><code>
 &gt;&gt;&gt; d['c'].make_public() 
 &gt;&gt;&gt; d['c'].url
 cloudydict-demo.s3-website-us-east-1.amazonaws.com/c
