@@ -50,5 +50,17 @@ class Storage(_Storage):
 
 class StorageFromSettings(Storage):
     def __init__(self):
-        Storage.__init__(self, *settings.CLOUDY_DICT_SERVER_OPTIONS_SECRET)
+        if hasattr(settings, 'CLOUDYDICT_STORAGE_SERVER_OPTIONS_SECRET'):
+            config = settings.CLOUDYDICT_STORAGE_SERVER_OPTIONS_SECRET
+        elif hasattr(settings, 'CLOUDY_DICT_STORAGE_SERVER_OPTIONS'):
+            import warnings
+            warnings.warn('Use of the CLOUDY_DICT_STORAGE_SERVER_OPTIONS settings is unsafe in DEBUG mode.  '
+                          'Use CLOUDYDICT_STORAGE_SERVER_OPTIONS_SECRET instead',
+                          warnings.DeprecationWarning)
+            config = settings.CLOUDY_DICT_STORAGE_SERVER_OPTIONS
+        else:
+            raise AttributeError('Use of cloudydict.django_storage.StorageFromSettings requires CLOUDYDICT_STORAGE_SERVER_OPTIONS_SECRET in django.conf.settings')        
+        Storage.__init__(self, *config)
+
+
 
