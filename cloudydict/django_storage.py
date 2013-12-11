@@ -1,6 +1,7 @@
 from django.core.files.storage import Storage as _Storage
 from cloudydict import cloudydict
 from django.conf import settings
+from StringIO import StringIO
 
 
 class Storage(_Storage):
@@ -11,7 +12,7 @@ class Storage(_Storage):
     def _open(self, name, mode='rb'):
         if 'w' in mode or 'a' in mode:
             raise IOERROR("Permission denied (cannot yet open cloudydict.djang_storage.Storage objects with writable flags)")
-        return self.dict[name]
+        return StringIO(self.dict[name].read())
 
     def delete(self, name):
         del(self.dict[name])
@@ -45,6 +46,7 @@ class Storage(_Storage):
             return "http://" + self.dict[name].url
         except KeyError:
             return None
+
 
 class StorageFromSettings(Storage):
     def __init__(self):
