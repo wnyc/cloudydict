@@ -32,8 +32,6 @@
         <h1>
 <a name="cloudydict" class="anchor" href="#cloudydict"><span class="octicon octicon-link"></span></a>cloudydict</h1>
 
-<p><img src="/cloud.jpg" alt="alt text"></p>
-
 <p>Cloudydict is a simple python module that makes accessing cloudfiles as easy as using a dictionary.  With cloudydict, gone are worries about proprietary APIS and complicated refactorings to migrate.  </p>
 
 
@@ -80,19 +78,21 @@ True
 cloudydict objects that can be treated either as strings or files.</p>
 
 <pre><code>
+>>> d['a']
+<cloudydict.s3.RemoteObject instance at 0x2466b00>
 
-&gt;&gt;&gt; import sys, codec
-&gt;&gt;&gt; sys.stdout = codecs.getwriter('utf8')(sys.stdout)   
 &gt;&gt;&gt; len(d['d'].read())
 12
+&gt;&gt;&gt; import sys, codec
+&gt;&gt;&gt; sys.stdout = codecs.getwriter('utf8')(sys.stdout)   
 &gt;&gt;&gt; print d['d'].decode('UTF-8')
 你好世界
 &gt;&gt;&gt; d.values()
-[<cloudydict.s3.RemoteObject instance at 0x2362ea8>, 
- <cloudydict.s3.RemoteObject instance at 0x235cf38>] 
+[&lt;cloudydict.s3.RemoteObject instance at 0x2362ea8&gt;, 
+ &lt;cloudydict.s3.RemoteObject instance at 0x235cf38&gt;] 
 &gt;&gt;&gt; d.items()
-[(u'a', <cloudydict.s3.RemoteObject instance at 0x23c2a70>),
- (u'b', <cloudydict.s3.RemoteObject instance at 0x23c2560>)]
+[(u'a', &lt;cloudydict.s3.RemoteObject instance at 0x23c2a70&gt;),
+ (u'b', &lt;cloudydict.s3.RemoteObject instance at 0x23c2560&gt;)]
 </code></pre>
 
 <p><code>__setitem__ </code> calls against cloudydict will accept a python string, file or another cloudydict <code>RemoveObject</code>.   If an assignment is made from a compatible remote object, cloudydict will perform the copy using the cloud's underlying bucket to bucket copy commands.   
