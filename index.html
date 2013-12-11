@@ -49,14 +49,67 @@
 <h2>
 <a name="tutorial" class="anchor" href="#tutorial"><span class="octicon octicon-link"></span></a>Tutorial</h2>
 
-<p>Assuming you've setup your <strong>.boto</strong> configuration file, working with S3 and cloudydict is as simple as:</p>
+<p>Assuming you've setup
+your <a href="code.google.com/p/boto/wiki/BotoConfig"><strong>.boto</strong>
+configuration file</a>, working with S3 and cloudydict is as simple
+as:</p>
 
-<pre><code>>>> from cloudydict import cloudydict         
->>> d = cloudydict('s3:cloudydict-demo')   
->>> d['a'] = 'Hello world'         
->>> d['b'] = 'How are you?'          
->>> d.keys()         
->>> d.values()
+<pre><code>&gt;&gt;&gt; from cloudydict import cloudydict         
+&gt;&gt;&gt; d = cloudydict('s3:cloudydict-demo') # Choose your own bucket name
+</code></pre>
+
+<p>The returned cloudydict object acts like a dictionary.  Items can be added.</p>
+
+<pre><code>
+&gt;&gt;&gt; d['a'] = 'Hello world'         
+&gt;&gt;&gt; d['b'] = 'How are you?'          
+&gt;&gt;&gt; d.keys()         
+[u'a', u'b']    
+&gt;&gt;&gt; 'c' in d
+False
+&gt;&gt;&gt; 'a' in d
+True
+&gt;&gt;&gt; 'd' in d
+False
+&gt;&gt;&gt; d.update(dict(d='你好世界'))
+&gt;&gt;&gt; 'd' in d
+True
+</code></pre>
+
+<p>Retrieval from cloudydict is lazy.  Values are returned as
+cloudydict objects that can be treated either as strings or files.</p>
+
+<pre><code>
+
+&gt;&gt;&gt; import sys, codec
+&gt;&gt;&gt; sys.stdout = codecs.getwriter('utf8')(sys.stdout)   
+&gt;&gt;&gt; len(d['d'].read())
+12
+&gt;&gt;&gt; print d['d'].decode('UTF-8')
+你好世界
+&gt;&gt;&gt; d.values()
+[<cloudydict.s3.RemoteObject instance at 0x2362ea8>, 
+ <cloudydict.s3.RemoteObject instance at 0x235cf38>] 
+&gt;&gt;&gt; d.items()
+[(u'a', <cloudydict.s3.RemoteObject instance at 0x23c2a70>),
+ (u'b', <cloudydict.s3.RemoteObject instance at 0x23c2560>)]
+</code></pre>
+
+<p><code>__setitem__ </code> calls against cloudydict will accept a python string, file or another cloudydict <code>RemoveObject</code>.   If an assignment is made from a compatible remote object, cloudydict will perform the copy using the cloud's underlying bucket to bucket copy commands.   
+<pre><code>
+
+&gt;&gt;&gt; d['c'] = d['b']  # Does not download d['b']
+&gt;&gt;&gt; str(d['c'])   # Well, this does
+'world'   
+</code></pre>
+
+<p>Lastly cloudydict supports a number of non standard but cloud
+specific operations.  Not all cloud vendors support these, but for
+those that do, you can make files public and retrieve their url.</p>
+
+&gt;&gt;&gt; d['c'].make_public() 
+&gt;&gt;&gt; d['c'].url
+cloudydict-demo.s3-website-us-east-1.amazonaws.com/c
 </code></pre>
 
 
