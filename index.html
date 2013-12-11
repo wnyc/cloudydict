@@ -26,6 +26,17 @@
           <li><a href="https://github.com/wnyc/cloudydict/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/wnyc/cloudydict">View On <strong>GitHub</strong></a></li>
           <li><a href="https://pypi.python.org/pypi/cloudydict">View On <strong>Pypi</strong></a></li>
+	  <br>
+	  <li><a href="#django">Now with Django support</a></li>
+	  <p>
+	    Cloudydict comes with a Django StorageServer.  Now you can
+	    use any cloudy file service supported by Cloudydict.  That's
+	    right: you no longer need to use your local file system
+	    </p>
+	  
+	  DEFAULT_FILE_STORAGE = 'cloudydict.django_storage.StorageFromSettings'
+
+
         </ul>
       </header>
       <section>
@@ -121,6 +132,24 @@ cloudydict-demo.s3-website-us-east-1.amazonaws.com/c
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
+<h2>
+<a name="installation" class="anchor" href="#django"><span class="octicon octicon-link"></span></a>Django Support</h2>
+
+Cloudydict comes with a Django Storage Server.   To free yourself from using your local file system to service content, just make the following small changes to your settings file:
+
+<pre><code>
+
+DEFAULT_FILE_STORAGE = 'cloudydict.django_storage.StorageFromSettings'
+
+<i>CLOUDYDICT_STORAGE_SERVER_SECRETS = ('service:container', ... credentials ... ) </i>
+
+# For S3 this would looke like
+CLOUDYDICT_STORAGE_SERVER_SECRETS = ('s3:blab-blab', &lt;aws user&gt;, &lt;aws secret key&gt;)
+
+</code></pre>
+
+
+
     
   </body>
 </html>
