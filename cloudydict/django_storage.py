@@ -14,6 +14,12 @@ class Storage(_Storage):
             raise IOERROR("Permission denied (cannot yet open cloudydict.djang_storage.Storage objects with writable flags)")
         return StringIO(self.dict[name].read())
 
+    def modified_time(self, name):
+        try:
+            return self.dict[name].last_modified
+        except AttributeError:
+            return None 
+
     def delete(self, name):
         del(self.dict[name])
 

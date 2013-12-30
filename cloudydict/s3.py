@@ -2,8 +2,10 @@ import boto
 from boto.s3.connection import S3Connection
 from boto.s3.lifecycle import Lifecycle, Transition, Rule
 from boto.s3.key import Key
+from boto.utils import parse_ts
 from cloudydict import common
 from datetime import datetime, timedelta
+from time import mktime 
 
 class RemoteObject(common.RemoteObject):
     def __init__(self, key, url, bucket=None):
@@ -15,7 +17,7 @@ class RemoteObject(common.RemoteObject):
 
     @property
     def last_modified(self):
-        return self.key.last_modified
+        return mktime(self.key.last_modified.timetuple())
 
     def as_string(self):
         if self.value is None:
@@ -70,14 +72,14 @@ class CloudyDict(common.DictsLittleHelper):
 
     def __setitem__(self, key, value):
         if isinstance(value, RemoteObject):
-            self.bucket.copy_key(key, value.bucket.name, value.key.name)
+            self.bucket.copy_key(key.encode('utf-8'), value.bucket.name, value.key.name)
             return 
         k = Key(self.bucket)
-        k.key = key
+        k.key = key.encode('utf-8')
         k.set_contents_from_string(value)
 
     def __getitem__(self, k):
-        key = self.bucket.get_key(k)
+        key = self.bucket.get_key(k.encode('utf-8'))
         if key is None:
             raise KeyError(k)
         return RemoteObject(key,  self.host + "/" + key.key, self.bucket)
@@ -94,7 +96,7 @@ class CloudyDict(common.DictsLittleHelper):
             return False
 
     def __delitem__(self, key):
-        self.bucket.delete_key(key)
+        self.bucket.delete_key(key.encode('utf-8'))
 
     def make_public(self):
         return self.bucket.make_public(recursive=True)
