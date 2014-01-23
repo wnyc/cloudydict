@@ -17,7 +17,7 @@ class RemoteObject(common.RemoteObject):
 
     @property
     def last_modified(self):
-        return mktime(self.key.last_modified.timetuple())
+        return mktime(parse_ts(self.key.last_modified).timetuple())
 
     def as_string(self):
         if self.value is None:
