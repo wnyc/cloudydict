@@ -11,8 +11,11 @@ class Storage(_Storage):
 
     def _open(self, name, mode='rb'):
         if 'w' in mode or 'a' in mode:
-            raise IOERROR("Permission denied (cannot yet open cloudydict.djang_storage.Storage objects with writable flags)")
-        return StringIO(self.dict[name].read())
+            raise IOError("Permission denied (cannot yet open cloudydict.djang_storage.Storage objects with writable flags)")
+        try:
+            return StringIO(self.dict[name].read())
+        except KeyError, e:
+            raise IOError(e)
 
     def modified_time(self, name):
         try:
