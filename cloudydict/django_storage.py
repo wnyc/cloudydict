@@ -65,7 +65,7 @@ class StorageFromSettings(Storage):
             import warnings
             warnings.warn('Use of the CLOUDY_DICT_STORAGE_SERVER_OPTIONS settings is unsafe in DEBUG mode.  '
                           'Use CLOUDYDICT_STORAGE_SERVER_OPTIONS_SECRET instead',
-                          warnings.DeprecationWarning)
+                          DeprecationWarning)
             config = settings.CLOUDY_DICT_STORAGE_SERVER_OPTIONS
         else:
             raise AttributeError('Use of cloudydict.django_storage.StorageFromSettings requires CLOUDYDICT_STORAGE_SERVER_OPTIONS_SECRET in django.conf.settings')        
